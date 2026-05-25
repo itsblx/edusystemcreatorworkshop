@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ms" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="EDUSYSTEM CREATOR WORKSHOP - Bina sistem pendidikan profesional menggunakan AI dalam hanya 2 jam." />
+  <title>EDUSYSTEM CREATOR WORKSHOP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui']
+          },
+          colors: {
+            ink: '#0b1020',
+            night: '#10152c',
+            electric: '#7c3aed',
+            aqua: '#22d3ee',
+            skypro: '#2563eb'
+          },
+          boxShadow: {
+            glow: '0 0 34px rgba(34, 211, 238, .35)',
+            violet: '0 20px 80px rgba(124, 58, 237, .28)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    :root {
+      --glass: rgba(255, 255, 255, .1);
+      --glass-border: rgba(255, 255, 255, .18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #070b1a;
+      color: #f8fbff;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 16% 18%, rgba(124, 58, 237, .34), transparent 34%),
+        radial-gradient(circle at 84% 8%, rgba(34, 211, 238, .24), transparent 32%),
+        radial-gradient(circle at 72% 74%, rgba(37, 99, 235, .24), transparent 36%),
+        linear-gradient(135deg, #070b1a 0%, #10152c 44%, #0a1229 100%);
+      z-index: -3;
+    }
+
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .08;
+      z-index: -1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+    }
+
+    .glass {
+      background: linear-gradient(145deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, .055));
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 70px rgba(3, 8, 28, .36);
+      backdrop-filter: blur(22px);
+    }
+
+    .section-shell {
+      position: relative;
+      padding: 6rem 0;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #fff 0%, #dff9ff 22%, #7dd3fc 50%, #c4b5fd 78%, #fff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .gradient-button {
+      position: relative;
+      isolation: isolate;
+      background: linear-gradient(110deg, #7c3aed, #2563eb, #22d3ee, #8b5cf6);
+      background-size: 240% 240%;
+      animation: gradientShift 5s ease infinite;
+      box-shadow: 0 18px 44px rgba(34, 211, 238, .22), inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .gradient-button::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      z-index: -1;
+      border-radius: inherit;
+      background: inherit;
+      filter: blur(18px);
+      opacity: .55;
+      transition: opacity .3s ease, transform .3s ease;
+    }
+
+    .gradient-button:hover::before {
+      opacity: .9;
+      transform: scale(1.04);
+    }
+
+    .soft-card {
+      transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease, background .35s ease;
+    }
+
+    .soft-card:hover {
+      transform: translateY(-9px);
+      border-color: rgba(125, 211, 252, .46);
+      box-shadow: 0 26px 84px rgba(34, 211, 238, .18);
+      background: linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.075));
+    }
+
+    .floating-blob {
+      position: absolute;
+      width: 18rem;
+      aspect-ratio: 1;
+      border-radius: 999px;
+      filter: blur(34px);
+      opacity: .38;
+      pointer-events: none;
+      animation: floatBlob 11s ease-in-out infinite alternate;
+    }
+
+    .particle {
+      position: fixed;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(125, 211, 252, .9);
+      box-shadow: 0 0 18px rgba(34, 211, 238, .8);
+      animation: drift var(--duration) linear infinite;
+      z-index: -2;
+    }
+
+    .orbital {
+      animation: floatIllustration 6s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    .orbit-dot {
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity .75s ease, transform .75s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .input-wrap input,
+    .input-wrap textarea {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.17);
+      color: white;
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .input-wrap input:focus,
+    .input-wrap textarea:focus {
+      border-color: rgba(34,211,238,.78);
+      box-shadow: 0 0 0 4px rgba(34, 211, 238, .12);
+      background: rgba(255,255,255,.12);
+    }
+
+    .input-wrap label {
+      transition: transform .2s ease, opacity .2s ease, color .2s ease;
+      pointer-events: none;
+    }
+
+    .input-wrap input:focus + label,
+    .input-wrap input:not(:placeholder-shown) + label {
+      transform: translateY(-1.75rem) scale(.84);
+      opacity: .95;
+      color: #a5f3fc;
+    }
+
+    .separator {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(34,211,238,.42), rgba(167,139,250,.48), transparent);
+    }
+
+    #loader {
+      transition: opacity .45s ease, visibility .45s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .spinner-ring {
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 999px;
+      background: conic-gradient(from 120deg, #22d3ee, #7c3aed, transparent 72%);
+      animation: spin 1s linear infinite;
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 0);
+      mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 0);
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes drift {
+      from { transform: translate3d(var(--start-x), 110vh, 0) scale(.6); opacity: 0; }
+      15% { opacity: .75; }
+      85% { opacity: .75; }
+      to { transform: translate3d(var(--end-x), -12vh, 0) scale(1.15); opacity: 0; }
+    }
+
+    @keyframes floatBlob {
+      from { transform: translate3d(0, 0, 0) scale(1); }
+      to { transform: translate3d(42px, -32px, 0) scale(1.1); }
+    }
+
+    @keyframes floatIllustration {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-16px) rotate(1.5deg); }
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: .55; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.35); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(1turn); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+
+      .particle {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loader" class="fixed inset-0 z-[100] grid place-items-center bg-[#070b1a]">
+    <div class="text-center">
+      <div class="spinner-ring mx-auto"></div>
+      <p class="mt-5 text-sm font-semibold tracking-[.28em] text-cyan-100">LOADING WORKSHOP</p>
+    </div>
+  </div>
+
+  <div class="noise"></div>
+  <div id="particles"></div>
+
+  <header class="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-[#070b1a]/70 backdrop-blur-2xl">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8" aria-label="Navigasi utama">
+      <a href="#hero" class="group flex items-center gap-3">
+        <span class="grid h-10 w-10 place-items-center rounded-xl bg-white/10 ring-1 ring-white/15 transition group-hover:scale-105 group-hover:ring-cyan-300/60">
+          <svg class="h-5 w-5 text-cyan-200" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3 3 8l9 5 9-5-9-5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M5 11v5.2c0 .7.4 1.4 1 1.7l6 3 6-3c.6-.3 1-.9 1-1.7V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="text-sm font-black leading-tight tracking-wide text-white sm:text-base">EDUSYSTEM<br class="sm:hidden"> CREATOR</span>
+      </a>
+      <button id="menuBtn" class="rounded-xl border border-white/15 p-2 text-white transition hover:border-cyan-300/70 hover:bg-white/10 lg:hidden" aria-label="Buka menu" aria-expanded="false">
+        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div id="navLinks" class="absolute left-5 right-5 top-[4.7rem] hidden flex-col gap-2 rounded-2xl border border-white/15 bg-[#0b1020]/95 p-4 shadow-violet backdrop-blur-xl lg:static lg:flex lg:flex-row lg:items-center lg:gap-1 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
+        <a class="nav-link rounded-xl px-4 py-2 text-sm font-semibold text-white/75 transition hover:bg-white/10 hover:text-cyan-100" href="#benefits">Manfaat</a>
+        <a class="nav-link rounded-xl px-4 py-2 text-sm font-semibold text-white/75 transition hover:bg-white/10 hover:text-cyan-100" href="#schedule">Jadual</a>
+        <a class="nav-link rounded-xl px-4 py-2 text-sm font-semibold text-white/75 transition hover:bg-white/10 hover:text-cyan-100" href="#pricing">Harga</a>
+        <a class="nav-link rounded-xl px-4 py-2 text-sm font-semibold text-white/75 transition hover:bg-white/10 hover:text-cyan-100" href="#register">Daftar</a>
+        <a class="nav-link rounded-xl px-4 py-2 text-sm font-semibold text-white/75 transition hover:bg-white/10 hover:text-cyan-100" href="#faq">FAQ</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="hero" class="relative flex min-h-screen items-center overflow-hidden px-5 pb-20 pt-32 lg:px-8">
+      <div class="floating-blob left-[-6rem] top-24 bg-electric"></div>
+      <div class="floating-blob right-[-5rem] top-28 bg-aqua" style="animation-delay:-3s"></div>
+      <div class="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-[1.04fr_.96fr]">
+        <div class="reveal">
+          <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-200/20 bg-white/10 px-4 py-2 text-sm font-semibold text-cyan-100 shadow-glow backdrop-blur">
+            <span class="h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_14px_#67e8f9]"></span>
+            Bengkel AI praktikal untuk warga pendidik
+          </div>
+          <h1 class="max-w-4xl text-5xl font-black leading-[.95] tracking-normal sm:text-6xl lg:text-7xl">
+            <span class="gradient-text">EDUSYSTEM CREATOR WORKSHOP</span>
+          </h1>
+          <p class="mt-7 max-w-3xl text-2xl font-bold leading-tight text-white sm:text-3xl">Bina Sistem Pendidikan Profesional Menggunakan AI Dalam Hanya 2 Jam</p>
+          <p class="mt-5 max-w-2xl text-base leading-8 text-slate-200 sm:text-lg">Khas untuk warga pendidik yang ingin membina sistem pendidikan moden menggunakan Canva Code AI &amp; Google Gemini Canvas.</p>
+          <div class="mt-9 flex flex-col gap-4 sm:flex-row">
+            <a href="#register" class="gradient-button rounded-2xl px-7 py-4 text-center text-base font-extrabold text-white transition hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-cyan-300/30">Daftar Sekarang</a>
+            <a href="#schedule" class="rounded-2xl border border-white/18 bg-white/10 px-7 py-4 text-center text-base font-extrabold text-white backdrop-blur transition hover:-translate-y-1 hover:border-cyan-200/70 hover:bg-white/15 hover:shadow-glow">Lihat Jadual Bengkel</a>
+          </div>
+          <div class="mt-10 grid max-w-xl grid-cols-3 gap-3">
+            <div class="glass rounded-2xl p-4 text-center">
+              <div class="counter text-3xl font-black text-cyan-100" data-target="2">0</div>
+              <p class="mt-1 text-xs font-semibold text-white/60">Bengkel</p>
+            </div>
+            <div class="glass rounded-2xl p-4 text-center">
+              <div class="counter text-3xl font-black text-cyan-100" data-target="8">0</div>
+              <p class="mt-1 text-xs font-semibold text-white/60">Jam Sijil</p>
+            </div>
+            <div class="glass rounded-2xl p-4 text-center">
+              <div class="counter text-3xl font-black text-cyan-100" data-target="8">0</div>
+              <p class="mt-1 text-xs font-semibold text-white/60">Jam HRMIS</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal relative">
+          <div class="absolute inset-8 rounded-full bg-cyan-300/20 blur-3xl"></div>
+          <div class="glass orbital relative overflow-hidden rounded-[2rem] p-5 sm:p-8">
+            <div class="absolute right-5 top-5 flex gap-2">
+              <span class="h-3 w-3 rounded-full bg-cyan-300"></span>
+              <span class="h-3 w-3 rounded-full bg-violet-300"></span>
+              <span class="h-3 w-3 rounded-full bg-blue-300"></span>
+            </div>
+            <svg viewBox="0 0 640 520" class="h-auto w-full" role="img" aria-label="Ilustrasi sistem AI pendidikan digital">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1">
+                  <stop offset="0%" stop-color="#22d3ee"/>
+                  <stop offset="55%" stop-color="#2563eb"/>
+                  <stop offset="100%" stop-color="#8b5cf6"/>
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="6" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <rect x="52" y="74" width="430" height="316" rx="30" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.22)"/>
+              <rect x="88" y="118" width="260" height="30" rx="15" fill="url(#g1)" opacity=".9"/>
+              <rect x="88" y="174" width="330" height="20" rx="10" fill="rgba(255,255,255,.22)"/>
+              <rect x="88" y="214" width="260" height="20" rx="10" fill="rgba(255,255,255,.16)"/>
+              <rect x="88" y="270" width="126" height="76" rx="18" fill="rgba(34,211,238,.14)" stroke="rgba(34,211,238,.45)"/>
+              <rect x="236" y="270" width="126" height="76" rx="18" fill="rgba(124,58,237,.16)" stroke="rgba(196,181,253,.45)"/>
+              <path d="M452 194c62 0 112 50 112 112s-50 112-112 112-112-50-112-112 50-112 112-112Z" fill="rgba(34,211,238,.08)" stroke="url(#g1)" stroke-width="3"/>
+              <path d="M452 235v142M382 306h142M407 258c18 18 30 48 30 48s-12 30-30 48M497 258c-18 18-30 48-30 48s12 30 30 48" stroke="#a5f3fc" stroke-width="7" stroke-linecap="round" opacity=".85"/>
+              <circle class="orbit-dot" cx="452" cy="306" r="18" fill="#fff" filter="url(#glow)"/>
+              <path d="M202 420c48-35 96-35 144 0M164 455c86-55 172-55 258 0" stroke="url(#g1)" stroke-width="8" stroke-linecap="round" opacity=".75"/>
+              <g filter="url(#glow)">
+                <circle class="orbit-dot" cx="122" cy="82" r="9" fill="#22d3ee"/>
+                <circle class="orbit-dot" cx="545" cy="166" r="8" fill="#c4b5fd" style="animation-delay:.4s"/>
+                <circle class="orbit-dot" cx="535" cy="438" r="10" fill="#60a5fa" style="animation-delay:.8s"/>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="separator"></div>
+
+    <section id="benefits" class="section-shell px-5 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="reveal mx-auto max-w-3xl text-center">
+          <p class="text-sm font-black uppercase tracking-[.26em] text-cyan-200">Highlight Benefits</p>
+          <h2 class="mt-4 text-4xl font-black tracking-normal text-white sm:text-5xl">Setiap peserta akan menerima pakej pembelajaran lengkap</h2>
+        </div>
+        <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <article class="soft-card reveal glass rounded-3xl p-6">
+            <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-cyan-300/15 text-cyan-100 ring-1 ring-cyan-200/25">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z" stroke="currentColor" stroke-width="1.8"/><path d="M8 4v13a3 3 0 0 0 3 3" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Ebook Eksklusif</h3>
+            <p class="mt-3 leading-7 text-slate-300">Rujukan pantas untuk membina sistem pendidikan moden selepas bengkel.</p>
+          </article>
+          <article class="soft-card reveal glass rounded-3xl p-6">
+            <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-violet-300/15 text-violet-100 ring-1 ring-violet-200/25">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.7 5.1L19 10l-5.3 1.9L12 17l-1.7-5.1L5 10l5.3-1.9L12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z" stroke="currentColor" stroke-width="1.5"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Koleksi Prompt AI Premium</h3>
+            <p class="mt-3 leading-7 text-slate-300">Prompt siap guna untuk Canva Code AI dan Google Gemini Canvas.</p>
+          </article>
+          <article class="soft-card reveal glass rounded-3xl p-6">
+            <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-blue-300/15 text-blue-100 ring-1 ring-blue-200/25">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M8 3h8l2 4v14l-6-3-6 3V7l2-4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 7h10" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Sijil Penyertaan 8 Jam</h3>
+            <p class="mt-3 leading-7 text-slate-300">Sijil penyertaan disediakan untuk rekod pembangunan profesional.</p>
+          </article>
+          <article class="soft-card reveal glass rounded-3xl p-6">
+            <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-cyan-300/15 text-cyan-100 ring-1 ring-cyan-200/25">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14h16M8 16V9m4 7V6m4 10v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">8 Jam Pengisian HRMIS</h3>
+            <p class="mt-3 leading-7 text-slate-300">Penganjur boleh memberikan pengisian 8 jam untuk tujuan rekod HRMIS peserta.</p>
+          </article>
+          <article class="soft-card reveal glass rounded-3xl p-6">
+            <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-violet-300/15 text-violet-100 ring-1 ring-violet-200/25">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M5 6h14v12H5V6Z" stroke="currentColor" stroke-width="1.8"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Rakaman Bengkel</h3>
+            <p class="mt-3 leading-7 text-slate-300">Ulang kaji semula langkah pembinaan sistem pada masa sendiri.</p>
+          </article>
+          <article class="soft-card reveal glass rounded-3xl p-6">
+            <div class="mb-5 grid h-12 w-12 place-items-center rounded-2xl bg-blue-300/15 text-blue-100 ring-1 ring-blue-200/25">
+              <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v14H4V5Z" stroke="currentColor" stroke-width="1.8"/><path d="M8 9h8M8 13h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="text-xl font-extrabold text-white">Template Sistem Siap Guna</h3>
+            <p class="mt-3 leading-7 text-slate-300">Template praktikal untuk disesuaikan dengan kelas, panitia, dan tugasan sekolah.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="relative overflow-hidden px-5 py-14 lg:px-8">
+      <div class="mx-auto grid max-w-7xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="reveal glass rounded-3xl p-6 text-center">
+          <div class="counter text-4xl font-black text-white" data-target="6">0</div>
+          <p class="mt-2 font-semibold text-cyan-100">Bonus peserta</p>
+        </div>
+        <div class="reveal glass rounded-3xl p-6 text-center">
+          <div class="counter text-4xl font-black text-white" data-target="2">0</div>
+          <p class="mt-2 font-semibold text-cyan-100">Tool AI utama</p>
+        </div>
+        <div class="reveal glass rounded-3xl p-6 text-center">
+          <div class="counter text-4xl font-black text-white" data-target="120">0</div>
+          <p class="mt-2 font-semibold text-cyan-100">Minit setiap sesi</p>
+        </div>
+        <div class="reveal glass rounded-3xl p-6 text-center">
+          <div class="counter text-4xl font-black text-white" data-target="50">0</div>
+          <p class="mt-2 font-semibold text-cyan-100">RM sahaja</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="schedule" class="section-shell px-5 lg:px-8">
+      <div class="mx-auto max-w-6xl">
+        <div class="reveal mx-auto max-w-3xl text-center">
+          <p class="text-sm font-black uppercase tracking-[.26em] text-cyan-200">Workshop Schedule</p>
+          <h2 class="mt-4 text-4xl font-black tracking-normal text-white sm:text-5xl">Dua sesi intensif, terus bina sistem sebenar</h2>
+        </div>
+        <div class="relative mt-14 grid gap-7 lg:grid-cols-2">
+          <div class="absolute left-1/2 top-10 hidden h-[calc(100%-5rem)] w-px -translate-x-1/2 bg-gradient-to-b from-cyan-300 via-violet-300 to-transparent lg:block"></div>
+          <article class="soft-card reveal glass relative rounded-3xl p-7">
+            <span class="mb-5 inline-flex rounded-full bg-cyan-300/15 px-4 py-2 text-sm font-black text-cyan-100 ring-1 ring-cyan-200/25">Workshop 1</span>
+            <h3 class="text-2xl font-black text-white">Membina Sistem Pendidikan Menggunakan Canva Code AI</h3>
+            <div class="mt-6 space-y-3 text-slate-200">
+              <p class="flex items-center gap-3"><span class="text-cyan-200">04</span> 4 Jun 2026 (Khamis)</p>
+              <p class="flex items-center gap-3">
+                <svg class="h-5 w-5 shrink-0 text-cyan-200" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                3:00 Petang - 5:00 Petang
+              </p>
+            </div>
+          </article>
+          <article class="soft-card reveal glass relative rounded-3xl p-7">
+            <span class="mb-5 inline-flex rounded-full bg-violet-300/15 px-4 py-2 text-sm font-black text-violet-100 ring-1 ring-violet-200/25">Workshop 2</span>
+            <h3 class="text-2xl font-black text-white">Membina Sistem Untuk Warga Pendidik Menggunakan Google Gemini Canvas</h3>
+            <div class="mt-6 space-y-3 text-slate-200">
+              <p class="flex items-center gap-3"><span class="text-cyan-200">05</span> 5 Jun 2026 (Jumaat)</p>
+              <p class="flex items-center gap-3">
+                <svg class="h-5 w-5 shrink-0 text-cyan-200" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 7v5l3 2M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                3:00 Petang - 5:00 Petang
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="pricing" class="section-shell px-5 lg:px-8">
+      <div class="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[.9fr_1.1fr]">
+        <div class="reveal">
+          <p class="text-sm font-black uppercase tracking-[.26em] text-cyan-200">Pricing</p>
+          <h2 class="mt-4 text-4xl font-black tracking-normal text-white sm:text-5xl">Pelaburan kecil untuk hasil kerja AI yang terus boleh digunakan</h2>
+          <p class="mt-5 text-lg leading-8 text-slate-300">Satu bayaran untuk kedua-dua bengkel, termasuk bahan sokongan dan sijil penyertaan.</p>
+        </div>
+        <div class="soft-card reveal glass relative overflow-hidden rounded-[2rem] p-8 text-center">
+          <div class="absolute inset-x-10 top-0 h-1 rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400"></div>
+          <p class="text-sm font-black uppercase tracking-[.3em] text-cyan-100">For Both Workshops</p>
+          <div class="mt-5 text-6xl font-black text-white sm:text-7xl">RM50</div>
+          <p class="mt-3 text-2xl font-black text-cyan-100">SAHAJA</p>
+          <ul class="mx-auto mt-8 max-w-md space-y-4 text-left text-slate-200">
+            <li class="flex gap-3"><svg class="mt-1 h-5 w-5 shrink-0 text-cyan-200" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Access to both workshops</li>
+            <li class="flex gap-3"><svg class="mt-1 h-5 w-5 shrink-0 text-cyan-200" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Ebook</li>
+            <li class="flex gap-3"><svg class="mt-1 h-5 w-5 shrink-0 text-cyan-200" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Prompt collection</li>
+            <li class="flex gap-3"><svg class="mt-1 h-5 w-5 shrink-0 text-cyan-200" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Certificate</li>
+            <li class="flex gap-3"><svg class="mt-1 h-5 w-5 shrink-0 text-cyan-200" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Sokongan pengisian HRMIS 8 jam</li>
+          </ul>
+          <a href="#register" class="gradient-button mt-9 inline-flex rounded-2xl px-8 py-4 font-black text-white transition hover:-translate-y-1">Daftar &amp; Bayar</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="register" class="section-shell px-5 lg:px-8">
+      <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[.86fr_1.14fr]">
+        <div class="reveal">
+          <p class="text-sm font-black uppercase tracking-[.26em] text-cyan-200">Registration</p>
+          <h2 class="mt-4 text-4xl font-black tracking-normal text-white sm:text-5xl">Tempah tempat anda</h2>
+          <p class="mt-5 text-lg leading-8 text-slate-300">Bayaran hendaklah dibuat melalui ToyyibPay.</p>
+          <a href="https://toyyibpay.com/EDUSYSTEM-CREATOR-WORKSHOP" target="_blank" rel="noopener" class="gradient-button mt-8 inline-flex rounded-2xl px-8 py-4 font-black text-white transition hover:-translate-y-1">Bayar Sekarang</a>
+        </div>
+        <div class="soft-card reveal glass rounded-[2rem] p-6 sm:p-8">
+          <div class="mb-6 grid h-14 w-14 place-items-center rounded-2xl bg-cyan-300/15 text-cyan-100 ring-1 ring-cyan-200/25">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16v10H4V7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 10h16M8 15h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="text-3xl font-black text-white">Pembayaran ToyyibPay</h3>
+          <p class="mt-4 max-w-2xl text-lg leading-8 text-slate-300">Klik butang di bawah untuk membuat bayaran RM50 melalui sistem ToyyibPay. Pendaftaran akan diuruskan melalui pautan pembayaran rasmi bengkel.</p>
+          <div class="mt-7 rounded-3xl border border-cyan-200/20 bg-white/10 p-5">
+            <p class="text-sm font-black uppercase tracking-[.2em] text-cyan-100">Jumlah Bayaran</p>
+            <p class="mt-2 text-4xl font-black text-white">RM50 SAHAJA</p>
+            <p class="mt-2 text-slate-300">Untuk kedua-dua workshop</p>
+          </div>
+          <a href="https://toyyibpay.com/EDUSYSTEM-CREATOR-WORKSHOP" target="_blank" rel="noopener" class="gradient-button mt-8 inline-flex w-full justify-center rounded-2xl px-8 py-4 font-black text-white transition hover:-translate-y-1">Bayar Sekarang</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="testimonials" class="section-shell px-5 lg:px-8">
+      <div class="mx-auto max-w-7xl">
+        <div class="reveal mx-auto max-w-3xl text-center">
+          <p class="text-sm font-black uppercase tracking-[.26em] text-cyan-200">Testimonials</p>
+          <h2 class="mt-4 text-4xl font-black tracking-normal text-white sm:text-5xl">Apa kata warga pendidik</h2>
+        </div>
+        <div class="mt-12 grid gap-5 md:grid-cols-3">
+          <article class="soft-card reveal glass rounded-3xl p-7">
+            <p class="text-lg leading-8 text-slate-200">"Saya terus nampak bagaimana AI boleh bantu urus bahan PdP dengan lebih sistematik dan menarik."</p>
+            <div class="mt-6 font-black text-white">Cikgu Farah</div>
+            <p class="text-sm font-semibold text-cyan-100">Guru Bahasa Melayu</p>
+          </article>
+          <article class="soft-card reveal glass rounded-3xl p-7">
+            <p class="text-lg leading-8 text-slate-200">"Template dan prompt yang diberi sangat praktikal. Sesuai untuk guru yang baru mula guna AI."</p>
+            <div class="mt-6 font-black text-white">Encik Hazwan</div>
+            <p class="text-sm font-semibold text-cyan-100">Ketua Panitia STEM</p>
+          </article>
+          <article class="soft-card reveal glass rounded-3xl p-7">
+            <p class="text-lg leading-8 text-slate-200">"Bengkel ringkas tetapi padat. Saya boleh bina sistem rekod dan aktiviti kelas dengan lebih kemas."</p>
+            <div class="mt-6 font-black text-white">Puan Nabila</div>
+            <p class="text-sm font-semibold text-cyan-100">Guru Penyelaras ICT</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="section-shell px-5 lg:px-8">
+      <div class="mx-auto max-w-4xl">
+        <div class="reveal text-center">
+          <p class="text-sm font-black uppercase tracking-[.26em] text-cyan-200">FAQ</p>
+          <h2 class="mt-4 text-4xl font-black tracking-normal text-white sm:text-5xl">Soalan lazim</h2>
+        </div>
+        <div class="mt-10 space-y-4">
+          <div class="faq-item reveal glass rounded-3xl">
+            <button class="faq-btn flex w-full items-center justify-between gap-4 p-6 text-left text-lg font-black text-white">
+              Adakah bengkel ini sesuai untuk beginner?
+              <span class="faq-icon text-cyan-200">+</span>
+            </button>
+            <div class="faq-panel max-h-0 overflow-hidden transition-all duration-300">
+              <p class="px-6 pb-6 leading-8 text-slate-300">Ya. Bengkel disusun secara praktikal dan langkah demi langkah untuk warga pendidik yang baru mahu menggunakan AI.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal glass rounded-3xl">
+            <button class="faq-btn flex w-full items-center justify-between gap-4 p-6 text-left text-lg font-black text-white">
+              Adakah rakaman diberikan?
+              <span class="faq-icon text-cyan-200">+</span>
+            </button>
+            <div class="faq-panel max-h-0 overflow-hidden transition-all duration-300">
+              <p class="px-6 pb-6 leading-8 text-slate-300">Ya. Rakaman bengkel disediakan supaya peserta boleh ulang kaji semula selepas sesi berlangsung.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal glass rounded-3xl">
+            <button class="faq-btn flex w-full items-center justify-between gap-4 p-6 text-left text-lg font-black text-white">
+              Bagaimana sijil diberikan?
+              <span class="faq-icon text-cyan-200">+</span>
+            </button>
+            <div class="faq-panel max-h-0 overflow-hidden transition-all duration-300">
+              <p class="px-6 pb-6 leading-8 text-slate-300">Sijil penyertaan digital akan diberikan kepada peserta yang mendaftar dan mengikuti bengkel.</p>
+            </div>
+          </div>
+          <div class="faq-item reveal glass rounded-3xl">
+            <button class="faq-btn flex w-full items-center justify-between gap-4 p-6 text-left text-lg font-black text-white">
+              Adakah boleh digunakan untuk HRMIS?
+              <span class="faq-icon text-cyan-200">+</span>
+            </button>
+            <div class="faq-panel max-h-0 overflow-hidden transition-all duration-300">
+              <p class="px-6 pb-6 leading-8 text-slate-300">Ya. Penganjur boleh memberikan pengisian 8 jam untuk tujuan rekod HRMIS peserta.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/10 px-5 py-10 lg:px-8">
+    <div class="mx-auto flex max-w-7xl flex-col gap-8 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="text-2xl font-black text-white">EDUSYSTEM CREATOR WORKSHOP</h2>
+        <p class="mt-2 text-slate-300">Hubungi Cikgu Heryani melalui WhatsApp di talian 011-65005252</p>
+      </div>
+      <div class="flex gap-3">
+        <a href="https://wa.me/601165005252" target="_blank" rel="noopener" aria-label="WhatsApp Cikgu Heryani" class="grid h-11 w-11 place-items-center rounded-2xl border border-white/15 bg-white/10 text-white transition hover:-translate-y-1 hover:border-cyan-200 hover:text-cyan-100">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none"><path d="M7.5 19.5 4 20l.7-3A8 8 0 1 1 7.5 19.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9.5c.6 2.3 2.2 4 4.6 4.8l1.3-1.1 2 .8c-.2 1.4-1.3 2.4-2.7 2.4-3.5 0-7.1-3.1-7.1-7 0-1.4 1-2.5 2.3-2.7l.9 2-1.3.8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    window.addEventListener('load', () => {
+      setTimeout(() => document.getElementById('loader').classList.add('hidden'), 450);
+    });
+
+    const particles = document.getElementById('particles');
+    if (!prefersReducedMotion) {
+      for (let i = 0; i < 48; i += 1) {
+        const particle = document.createElement('span');
+        particle.className = 'particle';
+        particle.style.left = `${Math.random() * 100}vw`;
+        particle.style.setProperty('--start-x', `${(Math.random() * 24) - 12}px`);
+        particle.style.setProperty('--end-x', `${(Math.random() * 120) - 60}px`);
+        particle.style.setProperty('--duration', `${8 + Math.random() * 12}s`);
+        particle.style.animationDelay = `${Math.random() * -18}s`;
+        particles.appendChild(particle);
+      }
+    }
+
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.getElementById('navLinks');
+    menuBtn.addEventListener('click', () => {
+      const isOpen = !navLinks.classList.contains('hidden');
+      navLinks.classList.toggle('hidden');
+      menuBtn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    document.querySelectorAll('.nav-link').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth < 1024) {
+          navLinks.classList.add('hidden');
+          menuBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .15 });
+
+    document.querySelectorAll('.reveal').forEach((el, index) => {
+      el.style.transitionDelay = `${Math.min(index % 6, 5) * 70}ms`;
+      revealObserver.observe(el);
+    });
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = Number(el.dataset.target);
+        const duration = 1100;
+        const start = performance.now();
+        const tick = (now) => {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(eased * target);
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+        counterObserver.unobserve(el);
+      });
+    }, { threshold: .7 });
+
+    document.querySelectorAll('.counter').forEach((counter) => counterObserver.observe(counter));
+
+    document.querySelectorAll('.faq-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        const item = button.closest('.faq-item');
+        const panel = item.querySelector('.faq-panel');
+        const icon = item.querySelector('.faq-icon');
+        const isOpen = panel.style.maxHeight;
+
+        document.querySelectorAll('.faq-panel').forEach((otherPanel) => {
+          otherPanel.style.maxHeight = null;
+        });
+        document.querySelectorAll('.faq-icon').forEach((otherIcon) => {
+          otherIcon.textContent = '+';
+        });
+
+        if (!isOpen) {
+          panel.style.maxHeight = `${panel.scrollHeight}px`;
+          icon.textContent = '-';
+        }
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      document.querySelectorAll('.floating-blob').forEach((blob, index) => {
+        blob.style.transform = `translate3d(0, ${y * (index ? -.025 : .03)}px, 0)`;
+      });
+    }, { passive: true });
+
+  </script>
+</body>
+</html>
